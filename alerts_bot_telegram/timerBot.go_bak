@@ -1,0 +1,51 @@
+package main
+
+import (
+	"fmt"
+	"encoding/json"
+	"gopkg.in/telegram-bot-api.v4"
+	"log"
+	"os"
+	"time"
+)
+
+const (
+	configJSON = "E:\\golang\\work\\src\\alerts_bot_telegram\\config.json"
+)
+type Config struct {
+	TelegramBotToken string
+}
+
+func main(){
+	file, _ := os.Open(configJSON)
+	// fmt.Println(*file)
+	decoder := json.NewDecoder(file)
+	// fmt.Println(decoder)
+	configuration := Config{}
+	err := decoder.Decode(&configuration)
+	if err != nil {
+		log.Panic(err)
+	}
+	// fmt.Println(configuration.TelegramBotToken)
+
+	// Инициализация API 
+	bot, err := tgbotapi.NewBotAPI(configuration.TelegramBotToken)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	bot.Debug = false
+
+	log.Printf("Authorized on account %s", bot.Self.UserName)
+
+	// msg := tgbotapi.NewMessage(200128561, "text2")
+	// bot.Send(msg)
+
+	ticker := time.NewTicker(time.Second * 2)
+	for t := range ticker.C {
+		fmt.Println(t)
+		msg := tgbotapi.NewMessage(200128561, "period11")
+		bot.Send(msg)
+		}
+	
+}
